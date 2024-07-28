@@ -34,5 +34,5 @@ sleep 3
 
 :button Respaldo
 text Instalar un Respaldo o Modpack
-c_exec download_and_install_zip()
+c_exec DescargaDropbox()
 sleep 3 
