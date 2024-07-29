@@ -7,6 +7,9 @@ import zipfile
 import shutil
 import json
 import time
+import requests
+from PIL import Image
+from io import BytesIO
 
 RGB = [(0, 255, 0), (0, 128, 255), (255, 0, 255)]
 
@@ -172,10 +175,12 @@ def link():
 
 def DescargaDropbox():
     print(gradient_text("¡Los Modpacks están en fase experimental!", RGB))
-    print(gradient_text("En caso de Dropbox cambiar el ultimo 0 por un 1", RGB))
     url = input(gradient_text(f"\nIngrese la URL del Respaldo/Modpack: ", RGB)).strip()
     dest_folder = "servidor_minecraft"
 
+    # Verificar si la URL es de Dropbox y terminar en '0'
+    if "dropbox" in url and url.endswith('0'):
+        url = url[:-1] + '1'
     """Descargar y extraer un archivo ZIP en la carpeta servidor_minecraft."""
     download_folder = "descargas"
     
@@ -199,7 +204,7 @@ def DescargaDropbox():
         zip_ref.extractall(temp_extract_folder)
 
     # Verificar si el archivo descargado contiene las carpetas DIM-1, DIM1 y data
-    if all(os.path.exists(os.path.join(temp_extract_folder, folder)) for folder in ["DIM-1", "DIM1", "data"]):
+    if all(os.path.exists(os.path.join(temp_extract_folder, folder)) for folder in ["data"]):
         target_folder = os.path.join(dest_folder, "world")
         
         # Crear la carpeta "world" si no existe
@@ -207,6 +212,26 @@ def DescargaDropbox():
             os.makedirs(target_folder)
         
         # Reemplazar los archivos en la carpeta "world"
+        for item in os.listdir(temp_extract_folder):
+            s = os.path.join(temp_extract_folder, item)
+            d = os.path.join(target_folder, item)
+            if os.path.exists(d):
+                if os.path.isdir(d):
+                    shutil.rmtree(d)
+                else:
+                    os.remove(d)
+            if os.path.isdir(s):
+                shutil.copytree(s, d)
+            else:
+                shutil.copy2(s, d)
+    elif all(os.path.exists(os.path.join(temp_extract_folder, folder)) for folder in ["bStats"]):
+        target_folder = os.path.join(dest_folder, "plugins")
+        
+        # Crear la carpeta "plugins" si no existe
+        if not os.path.exists(target_folder):
+            os.makedirs(target_folder)
+        
+        # Reemplazar los archivos en la carpeta "plugins"
         for item in os.listdir(temp_extract_folder):
             s = os.path.join(temp_extract_folder, item)
             d = os.path.join(target_folder, item)
@@ -237,6 +262,38 @@ def DescargaDropbox():
     # Limpiar la carpeta de extracción temporal y el archivo descargado
     shutil.rmtree(temp_extract_folder)
     os.remove(local_filename)
-    print(gradient_text(f"Todos los archivos se han movido a {target_folder if all(os.path.exists(os.path.join(temp_extract_folder, folder)) for folder in ['DIM-1', 'DIM1', 'data']) else dest_folder}", RGB))
+    print(gradient_text(f"Todos los archivos se han movido a {dest_folder}", RGB))
+    input(gradient_text("\nPresiona cualquier tecla para continuar...", RGB))
+    sys.exit(0)
+
+def Img_Url():
+    os.system("clear")
+    img_url = input(gradient_text("Introduce el URL de la imagen: ", RGB))
+
+    if img_url.endswith('0'):
+        img_url = img_url[:-1] + '1'
+
+    # Crear la carpeta 'server_minecraft' si no existe
+    output_dir = 'servidor_minecraft'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    # Obtener el enlace de descarga directo de Imgur
+    download_link = img_url  # Ajustar esta línea según sea necesario
+    
+    # Descargar la imagen
+    response = requests.get(download_link)
+    response.raise_for_status()
+    
+    # Abrir la imagen
+    img = Image.open(BytesIO(response.content))
+    
+    # Redimensionar la imagen a 64x64 píxeles
+    img = img.resize((64, 64), Image.LANCZOS)
+
+    # Guardar la imagen como 'server-icon.png' en la carpeta 'servidor_minecraft'
+    img.save(os.path.join(output_dir, 'server-icon.png'))
+    
+    print(gradient_text("Imagen transformada a server icon", RGB))
     input(gradient_text("\nPresiona cualquier tecla para continuar...", RGB))
     sys.exit(0)

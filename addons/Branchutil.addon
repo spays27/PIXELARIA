@@ -4,6 +4,21 @@ a_version 1.0
 a_author Luna
 var redefinir_logo True
 
+:section 1
+exec cd servidor_minecraft
+exec rm server-icon.png
+download_file https://www.dropbox.com/scl/fi/rwcaasa0y17m17vbkpeh9/icon.png?rlkey=znaxxw3w9r9ucrxbarxis4sd3&st=2uh1aug6&dl=1 server-icon.png
+nsay PERRO DE MIERDA INSTALADO!!
+exec mv server-icon.png servidor_minecraft
+sleep 3
+
+:section 2
+c_exec os.system("clear")
+nsay Pasa una imagen a dropbox, despues copias el link y lo pegas aqui
+pause
+c_exec Img_Url()
+sleep 3
+
 :section redefine_funcs
 c_exec for i in glob.glob("addons/*.py"):f=open(i,'r');exec(f.read(),globals());f.close()
 
@@ -35,4 +50,13 @@ sleep 3
 :button Respaldo
 text Instalar un Respaldo o Modpack
 c_exec DescargaDropbox()
+sleep 3 
+
+:button Server Icon
+text Crear un server Icon
+nsay [1] Instalar Perro de Mierda (MI FAVORITO!!)
+nsay [2] Instalar foto de Imur
+input cond Selecciona una opción > 
+if "%cond%" == "1"  1 none
+if "%cond%" == "2"  2 none
 sleep 3 
