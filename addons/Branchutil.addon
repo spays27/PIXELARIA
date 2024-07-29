@@ -55,7 +55,7 @@ sleep 3
 :button Server Icon
 text Crear un server Icon
 nsay [1] Instalar Perro de Mierda (MI FAVORITO!!)
-nsay [2] Instalar foto de Imur
+nsay [2] Instalar foto de DropBox
 input cond Selecciona una opción > 
 if "%cond%" == "1"  1 none
 if "%cond%" == "2"  2 none
